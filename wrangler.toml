@@ -1,5 +1,8 @@
 name = "hono-practice"
+main = "src/index.ts"
+
 compatibility_date = "2023-12-01"
+node_compat = true # required for database drivers to function
 
 # [vars]
 # MY_VAR = "my-variable"

@@ -1,11 +1,6 @@
 import { Hono } from "hono";
-import { prisma } from "../libs/prisma";
 
 const app = new Hono();
-
-app.get("/", async (c) => {
-  const getUsers = await prisma.user.findMany();
-  return c.json(getUsers);
-});
+app.get("/", (c) => c.json("list Posts"));
 
 export default app;

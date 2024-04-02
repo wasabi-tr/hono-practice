@@ -20,5 +20,21 @@ app.get("/", async (c) => {
 
   return c.json(users);
 });
+app.post("/", async (c) => {
+  const neon = new Pool({ connectionString: c.env?.DATABASE_URL as string });
+  const adapter = new PrismaNeon(neon);
+  const prisma = new PrismaClient({ adapter });
+  const { name, email } = await c.req.json();
+
+  const user = await prisma.user.create({
+    data: {
+      email,
+      name,
+    },
+  });
+  console.log(user);
+
+  return c.json(user);
+});
 
 export default app;

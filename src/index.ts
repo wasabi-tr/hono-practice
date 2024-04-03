@@ -1,6 +1,8 @@
 import { Hono } from "hono";
 import post from "./post/index";
 import user from "./user/index";
+import page from "./page/index";
+import middleware from "./middleware/index";
 import dotenv from "dotenv";
 import { Pool } from "@neondatabase/serverless";
 import { PrismaNeon } from "@prisma/adapter-neon";
@@ -11,6 +13,8 @@ dotenv.config();
 
 app.route("/post", post);
 app.route("/user", user);
+app.route("/page", page);
+app.route("/middleware", middleware);
 
 app.get("/", async (c) => {
   const neon = new Pool({ connectionString: c.env?.DATABASE_URL as string });

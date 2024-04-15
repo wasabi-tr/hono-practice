@@ -17,8 +17,11 @@ app.get("/:id", async (c) => {
     where: {
       id,
     },
+    include: {
+      author: true,
+    },
   });
-  console.log(post);
+  console.log(post?.author);
 
   return c.json(post);
 });

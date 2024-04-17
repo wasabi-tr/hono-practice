@@ -3,6 +3,7 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 import { PrismaClient } from "@prisma/client";
 import { Hono } from "hono";
 import bcrypt from "bcryptjs";
+import { serverlessPrisma } from "../libs/prisma";
 
 const app = new Hono();
 app.get("/", async (c) => {
@@ -28,22 +29,25 @@ app.get("/:email", async (c) => {
 });
 
 app.post("/", async (c) => {
-  const neon = new Pool({ connectionString: c.env?.DATABASE_URL as string });
-  const adapter = new PrismaNeon(neon);
-  const prisma = new PrismaClient({ adapter });
-  const { name, email, password } = await c.req.json();
-  const saltRounds = 10;
-  const salt = bcrypt.genSaltSync(saltRounds);
-  const hashedPassword = bcrypt.hashSync(password, salt);
+  const { prisma } = serverlessPrisma(c.env?.DATABASE_URL as string);
+
+  const { id, name, email, password } = await c.req.json();
+
+  let hashedPassword = null;
+  if (password) {
+    const saltRounds = 10;
+    const salt = bcrypt.genSaltSync(saltRounds);
+    hashedPassword = bcrypt.hashSync(password, salt);
+  }
 
   const user = await prisma.user.create({
     data: {
+      id,
       email,
       name,
       password: hashedPassword,
     },
   });
-  console.log(user);
 
   return c.json(user);
 });
